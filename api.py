@@ -1,6 +1,7 @@
-from flask import Flask, jsonify
+from flask import Flask, Response
 import os
 import random
+import json
 
 app = Flask(__name__)
 
@@ -14,14 +15,17 @@ piadas = {
 @app.route("/")
 def root():
     randomico = random.randint(1, len(piadas))
-    return jsonify({"piadaAleatoria": piadas[randomico]})
+    resposta = json.dumps({"piadaAleatoria": piadas[randomico]}, ensure_ascii=False)
+    return Response(resposta, mimetype='application/json')
 
 @app.route("/piadas/<int:id_piada>")
 def pegar_piada(id_piada):
     if id_piada in piadas:
-        return jsonify(piadas[id_piada])
+        resposta = json.dumps(piadas[id_piada], ensure_ascii=False)
+        return Response(resposta, mimetype='application/json')
     else:
-        return jsonify({"Erro": "Id de piada inexistente"}), 404
+        erro = json.dumps({"Erro": "Id de piada inexistente"}, ensure_ascii=False)
+        return Response(erro, mimetype='application/json'), 404
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
