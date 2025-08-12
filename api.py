@@ -1,10 +1,11 @@
 from flask import Flask, Response
+from flask_cors import CORS
 import os
 import random
 import json
 
 app = Flask(__name__)
-
+CORS(app)
 piadas = {
     1: {"piada": "Sua mãe é tão gorda, mas tão gorda, que ela precisa comprar roupa na 'VestCasa'"},
     2: {"piada": "Sua mãe é tão burra, mas tão burra, que ela roubou amostra grátis"},
@@ -30,3 +31,5 @@ def pegar_piada(id_piada):
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port)
+    CORS(app, origins=["http://127.0.0.1:5500"])
+
