@@ -27,6 +27,12 @@ def pegar_piada(id_piada):
     else:
         erro = json.dumps({"Erro": "Id de piada inexistente"}, ensure_ascii=False)
         return Response(erro, mimetype='application/json'), 404
+    
+@app.route("/piadas/todas")
+def listar_piadas():
+    for piada in piadas:
+        resposta = json.dumps(piada, ensure_ascii=False)
+        return Response(resposta, mimetype='application/json')
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
