@@ -30,8 +30,7 @@ def pegar_piada(id_piada):
     
 @app.route("/piadas/todas")
 def listar_piadas():
-    for piada in piadas:
-        resposta = json.dumps(piada, ensure_ascii=False)
+        resposta = json.dumps(piadas, ensure_ascii=False)
         return Response(resposta, mimetype='application/json')
 
 if __name__ == "__main__":
