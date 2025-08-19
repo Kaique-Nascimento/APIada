@@ -4,20 +4,22 @@ import os
 import random
 import json
 import certifi
-
 from pymongo import MongoClient
 
 app = Flask(__name__)
-CORS(app, origins=["http://127.0.0.1:5500"])
+CORS(app, origins=["*"])  # Pode abrir para qualquer origem em produção, ajuste se necessário
 
-# Conexão com MongoDB Atlas
+# Conexão com MongoDB Atlas usando TLS e certifi
 link = os.environ.get('LINKDB')
 client = MongoClient(
     link,
     tls=True,
     tlsCAFile=certifi.where()
 )
-colecao = MongoClient(link, tls=True, tlsAllowInvalidCertificates=True).get_database("dbpiadas").get_collection("piadas")
+
+# Seleciona banco e coleção
+db = client.get_database("dbpiadas")
+colecao = db.get_collection("piadas")
 
 @app.route("/")
 def root():
