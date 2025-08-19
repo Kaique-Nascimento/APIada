@@ -2,35 +2,46 @@ from flask import Flask, Response
 from flask_cors import CORS
 import os
 import random
+from dotenv import load_dotenv
 import json
+from pymongo import MongoClient
+
+load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
-piadas = {
-    1: {"piada": "Sua mãe é tão gorda, mas tão gorda, que ela precisa comprar roupa na 'VestCasa'"},
-    2: {"piada": "Sua mãe é tão burra, mas tão burra, que ela roubou amostra grátis"},
-    3: {"piada": "Hoje na nossa loja temos Promoção, Promocinho e Provizinho!"},
-    4: {"piada": "Eu sou muito bom em engenharia quântica, química e em contar mentiras"},
-}
-
+link = os.getenv('LINKDB')
+conexao = MongoClient(link)
+db = conexao.get_database("dbpiadas")
+colecao = db.get_collection("piadas")
 @app.route("/")
 def root():
-    randomico = random.randint(1, len(piadas))
-    resposta = json.dumps({"piadaAleatoria": piadas[randomico]}, ensure_ascii=False)
+    piadas = list(colecao.find())
+    
+    if not piadas:
+        return Response(json.dumps({"Erro": "Nenhuma piada encontrada"}), mimetype='application/json', status=404)
+    
+    piada_aleatoria = random.choice(piadas)
+    
+    resposta = json.dumps({"piadaAleatoria": piada_aleatoria["piada"]}, ensure_ascii=False)
     return Response(resposta, mimetype='application/json')
 
-@app.route("/piadas/<int:id_piada>")
-def pegar_piada(id_piada):
-    if id_piada in piadas:
-        resposta = json.dumps(piadas[id_piada], ensure_ascii=False)
-        return Response(resposta, mimetype='application/json')
-    else:
-        erro = json.dumps({"Erro": "Id de piada inexistente"}, ensure_ascii=False)
-        return Response(erro, mimetype='application/json'), 404
+#@app.route("/piadas/<int:id_piada>")
+#def pegar_piada(id_piada):
+#    if id_piada in piadas:
+#        resposta = json.dumps(piadas[id_piada], ensure_ascii=False)
+#        return Response(resposta, mimetype='application/json')
+#    else:
+#        erro = json.dumps({"Erro": "Id de piada inexistente"}, ensure_ascii=False)
+#        return Response(erro, mimetype='application/json'), 404
     
 @app.route("/piadas/todas")
 def listar_piadas():
-        resposta = json.dumps(piadas, ensure_ascii=False)
+        resposta = ""
+        piadas = list(colecao.find())
+        for piada in piadas:
+            print(piada['piada'])
+            resposta += json.dumps(piada['piada'], ensure_ascii=False) + "\n"
         return Response(resposta, mimetype='application/json')
 
 if __name__ == "__main__":
