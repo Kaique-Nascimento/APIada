@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 import json
 from pymongo import MongoClient
 
+#load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
