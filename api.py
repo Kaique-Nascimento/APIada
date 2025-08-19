@@ -2,11 +2,11 @@ from flask import Flask, Response
 from flask_cors import CORS
 import os
 import random
+import certifi
 from dotenv import load_dotenv
 import json
 from pymongo import MongoClient
 
-load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
@@ -14,6 +14,8 @@ link = os.getenv('LINKDB')
 conexao = MongoClient(link)
 db = conexao.get_database("dbpiadas")
 colecao = db.get_collection("piadas")
+client = MongoClient(link, tlsCAFile=certifi.where())
+
 @app.route("/")
 def root():
     piadas = list(colecao.find())
