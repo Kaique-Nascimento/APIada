@@ -1,4 +1,5 @@
 flask
 flask-cors
-pymongo
+certifi
+pymongo>=4.0
 python-dotenv
