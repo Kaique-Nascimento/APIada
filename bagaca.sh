@@ -49,7 +49,7 @@ echo
 
 echo "[3/7] Detectando arquitetura..."
 
-A
+
 ARCH=$(uname -m)
 
 case "$ARCH" in
